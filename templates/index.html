@@ -1,13 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Klipper Print Status</title>
+    <title>Printer Status</title>
+    <style>
+        /* CSSスタイルは省略 */
+    </style>
 </head>
 <body>
-    <h1>Klipper Print Status</h1>
-    <!-- 正しいパスを使用 -->
-    <p>Temperature: {{ data['result']['status']['extruder']['temperature'] }}</p>
-    <p>Status: {{ data['result']['status']['print_stats']['state'] }}</p>
+    <div class="printer-status">
+        <div class="status-item" id="printer-name">VORON2</div>
+        <div class="status-item" id="bed-temp">ベッド温度: -°C</div>
+        <div class="status-item" id="nozzle-temp">ノズル温度: -°C</div>
+        <div class="status-item" id="position">座標: X-- Y-- Z--</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        // サーバーからプリンターデータを受信してUIを更新する
+        socket.on('printer_data', function(data) {
+            document.getElementById('bed-temp').textContent = 'ベッド温度: ' + data.result.heaters.heater_bed.temperature + '°C';
+            document.getElementById('nozzle-temp').textContent = 'ノズル温度: ' + data.result.extruder.temperature + '°C';
+            var position = data.result.toolhead.position;
+            document.getElementById('position').textContent = '座標: X' + position[0] + ' Y' + position[1] + ' Z' + position[2];
+        });
+
+        // プリンターデータの要求
+        socket.emit('request_printer_data');
+    </script>
 </body>
 </html>
