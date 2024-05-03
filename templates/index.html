@@ -1,29 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Printer Status</title>
-</head>
-<body>
-    <h1>Printer Status</h1>
-    <div id="printer-status"></div>
-
-    <script>
-        function getPrinterStatus() {
-            fetch('/printer/status')
+<meta charset="UTF-8">
+<title>プリンターステータス</title>
+<link rel="stylesheet" href="/static/styles.css">
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateStatus() {
+            fetch('/api/printer/status')
                 .then(response => response.json())
                 .then(data => {
-                    // Update the printer status on the webpage
-                    document.getElementById('printer-status').innerHTML = JSON.stringify(data, null, 2);
-                });
+                    const extruderTemp = data.result.status.extruder.temperature;
+                    const bedTemp = data.result.status.heater_bed.temperature;
+                    document.getElementById('extruder-temperature').innerText = `エクストルーダ温度: ${extruderTemp} °C`;
+                    document.getElementById('bed-temperature').innerText = `ベッド温度: ${bedTemp} °C`;
+                })
+                .catch(error => console.error('Error fetching data:', error));
         }
-
-        // Update the printer status every 5 seconds
-        setInterval(getPrinterStatus, 1000);
-
-        // Initial call to get printer status
-        getPrinterStatus();
+    
+        setInterval(updateStatus, 1000);  // 1000ミリ秒ごとに更新
+    });
     </script>
+    
+
+
+</head>
+<body>
+    <div class="card">
+        <h1>VORON2</h1>
+        <p id="extruder-temperature">エクストルーダ温度: 読み込み中...°C</p>
+        <p id="bed-temperature">ベッド温度: 読み込み中...°C</p>
+        <p id="position">座標: x00y00z00</p>
+    </div>
 </body>
 </html>
