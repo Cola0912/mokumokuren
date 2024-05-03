@@ -5,32 +5,62 @@
 <title>プリンターステータス</title>
 <link rel="stylesheet" href="/static/styles.css">
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        function updateStatus() {
-            fetch('/api/printer/status')
-                .then(response => response.json())
-                .then(data => {
-                    const extruderTemp = data.result.status.extruder.temperature;
-                    const bedTemp = data.result.status.heater_bed.temperature;
-                    document.getElementById('extruder-temperature').innerText = `エクストルーダ温度: ${extruderTemp} °C`;
-                    document.getElementById('bed-temperature').innerText = `ベッド温度: ${bedTemp} °C`;
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-    
-        setInterval(updateStatus, 1000);  // 1000ミリ秒ごとに更新
-    });
-    </script>
-    
+document.addEventListener('DOMContentLoaded', function() {
+    function updateStatus() {
+        fetch('/api/printer/status')
+            .then(response => response.json())
+            .then(data => {
+                const extruderTemp = data.result.status.extruder.temperature;
+                const bedTemp = data.result.status.heater_bed.temperature;
+                const position = data.result.status.toolhead.position;
+                document.getElementById('extruder-temperature').innerText = `エクストルーダ温度: ${extruderTemp} °C`;
+                document.getElementById('bed-temperature').innerText = `ベッド温度: ${bedTemp} °C`;
+                document.getElementById('position').innerText = `座標: X${position[0]} Y${position[1]} Z${position[2]}`;
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
 
-
+    setInterval(updateStatus, 1000);  // 1000ミリ秒ごとに更新
+});
+</script>
 </head>
 <body>
     <div class="card">
-        <h1>VORON2</h1>
-        <p id="extruder-temperature">エクストルーダ温度: 読み込み中...°C</p>
-        <p id="bed-temperature">ベッド温度: 読み込み中...°C</p>
-        <p id="position">座標: x00y00z00</p>
+        <h1>Printer 1</h1>
+        <p id="extruder-temperature">エクストルーダ温度: ...°C</p>
+        <div>
+            <input type="number" id="set-temp" value="200">
+            <button onclick="setTemperature()">設定</button>
+        </div>
+
+        <p id="bed-temperature">ベッド温度: ...°C</p>
+        <p id="position">座標: ...</p>
+        <button onclick="homePrinter()"><img src="{{ url_for('static', filename='icon.png') }}" alt="Icon" width="100" height="100"></button>
+
+
     </div>
+
+    <script>
+    function homePrinter() {
+        fetch('/api/printer/home', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => alert('ホームコマンドが送信されました'))
+            .catch(error => console.error('Error sending home command:', error));
+    }
+    
+    function setTemperature() {
+        const temp = document.getElementById('set-temp').value;
+        fetch('/api/printer/set_temperature', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ temperature: temp })
+        })
+            .then(response => response.json())
+            .then(data => alert('温度が設定されました: ' + temp + '℃'))
+            .catch(error => console.error('Error setting temperature:', error));
+    }
+    </script>
+    </div>
+    
 </body>
 </html>
