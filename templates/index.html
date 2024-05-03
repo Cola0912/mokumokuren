@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Klipper Print Status</title>
+</head>
+<body>
+    <h1>Klipper Print Status</h1>
+    <!-- 正しいパスを使用 -->
+    <p>Temperature: {{ data['result']['status']['extruder']['temperature'] }}</p>
+    <p>Status: {{ data['result']['status']['print_stats']['state'] }}</p>
+</body>
+</html>
