@@ -1,2 +1,2 @@
-# mokumokuren
+# mokumokuren（モクモクれん）
 複数のklipperファームウェア3Dプリンターを一つのページで監視するwebUIを立ち上げるアプリケーション
