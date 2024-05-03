@@ -1,36 +1,19 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO
-import websocket
-import json
+from flask import Flask, render_template, jsonify
+import requests
 
 app = Flask(__name__)
-socketio = SocketIO(app)
 
-# klipperのWebSocketエンドポイント
-KLIPPER_WS_ENDPOINT = "ws://192.168.0.14/ws"
-
-# WebSocket接続を開始して、データを取得する関数
-def get_printer_data():
-    try:
-        ws = websocket.create_connection(KLIPPER_WS_ENDPOINT)
-        # klipperからデータを取得
-        ws.send(json.dumps({"jsonrpc": "2.0", "method": "printer.objects.query", "params": {"heaters": ["heater_bed"], "extruder": ["extruder"], "toolhead": ["toolhead"]}, "id": 0}))
-        result = json.loads(ws.recv())
-        ws.close()
-        return result
-    except Exception as e:
-        print("Error:", e)
-        return None
+PRINTER_URL = "http://192.168.0.14:7125"
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@socketio.on('request_printer_data')
-def handle_printer_data():
-    data = get_printer_data()
-    if data:
-        socketio.emit('printer_data', data)
+@app.route('/printer/status')
+def get_printer_status():
+    response = requests.get(f"{PRINTER_URL}/printer/objects/query?extruder&print_stats")
+    data = response.json()
+    return jsonify(data)
 
 if __name__ == '__main__':
-    socketio.run(app)
+    app.run(debug=True)

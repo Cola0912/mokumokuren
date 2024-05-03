@@ -1,34 +1,29 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Printer Status</title>
-    <style>
-        /* CSSスタイルは省略 */
-    </style>
 </head>
 <body>
-    <div class="printer-status">
-        <div class="status-item" id="printer-name">VORON2</div>
-        <div class="status-item" id="bed-temp">ベッド温度: -°C</div>
-        <div class="status-item" id="nozzle-temp">ノズル温度: -°C</div>
-        <div class="status-item" id="position">座標: X-- Y-- Z--</div>
-    </div>
+    <h1>Printer Status</h1>
+    <div id="printer-status"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
     <script>
-        var socket = io();
+        function getPrinterStatus() {
+            fetch('/printer/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the printer status on the webpage
+                    document.getElementById('printer-status').innerHTML = JSON.stringify(data, null, 2);
+                });
+        }
 
-        // サーバーからプリンターデータを受信してUIを更新する
-        socket.on('printer_data', function(data) {
-            document.getElementById('bed-temp').textContent = 'ベッド温度: ' + data.result.heaters.heater_bed.temperature + '°C';
-            document.getElementById('nozzle-temp').textContent = 'ノズル温度: ' + data.result.extruder.temperature + '°C';
-            var position = data.result.toolhead.position;
-            document.getElementById('position').textContent = '座標: X' + position[0] + ' Y' + position[1] + ' Z' + position[2];
-        });
+        // Update the printer status every 5 seconds
+        setInterval(getPrinterStatus, 1000);
 
-        // プリンターデータの要求
-        socket.emit('request_printer_data');
+        // Initial call to get printer status
+        getPrinterStatus();
     </script>
 </body>
 </html>
