@@ -1,11 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 import requests
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    # HTMLページを返す
     return render_template('index.html')
 
 @app.route('/api/printer/status')
@@ -21,7 +20,6 @@ def get_printer_status():
 @app.route('/api/printer/home', methods=['POST'])
 def home_printer():
     try:
-        # KlipperのG28コマンドを送信
         url = 'http://192.168.0.14:7125/printer/gcode/script'
         payload = {'script': 'G28'}
         response = requests.post(url, json=payload)
@@ -34,12 +32,23 @@ def home_printer():
 def set_temperature():
     temp = request.json.get('temperature')
     try:
-        # ここで実際の温度設定リクエストを送信する
         url = 'http://192.168.0.14:7125/printer/gcode/script'
         payload = {'script': f'M104 S{temp}'}
         response = requests.post(url, json=payload)
         response.raise_for_status()
         return jsonify({"message": f"Temperature set to {temp}°C"})
+    except requests.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/printer/send_gcode', methods=['POST'])
+def send_gcode():
+    gcode = request.json.get('gcode')
+    try:
+        url = 'http://192.168.0.14:7125/printer/gcode/script'
+        payload = {'script': gcode}
+        response = requests.post(url, json=payload)
+        response.raise_for_status()
+        return jsonify({"message": "G-code sent successfully", "response": response.json()})
     except requests.RequestException as e:
         return jsonify({"error": str(e)}), 500
 

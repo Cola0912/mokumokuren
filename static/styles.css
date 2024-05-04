@@ -1,31 +1,53 @@
 body {
     font-family: Arial, sans-serif;
-    background: #242424;
+    background-color: #333;
+    color: white;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
     height: 100vh;
     margin: 0;
 }
 
 .card {
-    background: #5a5a5a;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    background-color: #222;
     padding: 20px;
-    text-align: center;
-    width: 300px;
-    box-sizing: border-box;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 600px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
-.card h1 {
-    color: hsl(0, 0%, 85%);
-    margin-top: 0;
+.card-con {
+    background-color: #444;
+    padding: 10px;
+    border-radius: 8px;
 }
 
-.card p {
-    color: hsl(0, 0%, 85%);
-    font-size: 16px;
-    margin: 10px 0;
+#extruder-temperature, #bed-temperature, #position {
+    margin-bottom: 10px;
 }
 
+input[type="text"], input[type="number"] {
+    width: calc(80% - 22px);
+    padding: 5px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 4px;
+}
+
+button {
+    width: 20%;
+    padding: 3px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #004494;
+}
