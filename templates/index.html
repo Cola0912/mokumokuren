@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <title>プリンターステータス</title>
 <link rel="stylesheet" href="/static/styles.css">
+<link rel="icon" href="/static/icon.png" type="image/png">
+<link rel="shortcut icon" href="/static/icon.ico" type="image/x-icon">
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const gcodeForm = document.getElementById('gcode-form');
@@ -59,6 +62,26 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card">
         <div class="card-con">
             <h1>Printer 1</h1>
+            <p id="extruder-temperature">エクストルーダ温度: 読み込み中...°C</p>
+            <input type="number" id="set-temp" placeholder="Enter Temperature">
+            <button onclick="setTemperature()">設定</button>
+            <p id="bed-temperature">ベッド温度: 読み込み中...°C</p>
+            <p id="position">座標: 読み込み中...</p>
+            <button onclick="homePrinter()"><img src="{{ url_for('static', filename='home.png') }}" alt="Icon" width="40" height="40"></button>
+            <br>
+        </div>
+        <div class="card-con">
+            <form id="gcode-form">
+                <input type="text" id="gcode-input" placeholder="Enter G-code">
+                <button type="submit">送信</button>
+            </form>
+            <p id="gcode-response">応答: 待機中...</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-con">
+            <h1>Printer 2</h1>
             <p id="extruder-temperature">エクストルーダ温度: 読み込み中...°C</p>
             <input type="number" id="set-temp" placeholder="Enter Temperature">
             <button onclick="setTemperature()">設定</button>
