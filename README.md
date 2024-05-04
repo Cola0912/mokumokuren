@@ -4,4 +4,4 @@
 
 複数(予定)のklipperファームウェア3Dプリンターを一つのページで監視するwebUIを立ち上げるアプリケーション
 
-<img src="imag.png" alt="目目連" width="300" height="300">
+<img src="image.png" alt="こんなかんじ〜な画像" width="300">
